@@ -4,14 +4,29 @@ import pandas as pd
 st.balloons()
 st.markdown("# Data Evaluation App")
 
-st.write("We are so glad to\n see you here. ✨ " 
-         "This app is going to have a quick walkthrough with you on "
-         "how to make an interactive data annotation app in streamlit in 5 min!")
+st.write("TEXT TO ADD TO STREAMLIT WHEN WIFI WORKS :)
 
-st.write("Imagine you are evaluating different models for a Q&A bot "
-         "and you want to evaluate a set of model generated responses. "
-        "You have collected some user data. "
-         "Here is a sample question and response set.")
+The crucial question many investors ask themselves is whether the stock market really returns an average of 7/8% per year. The scope of this short article is to try to provide an answer to that question. Of course, the answer won't be a precise percentage, as stock market returns may depend on the time period and index composition (tech stocks vs value stocks, developed countries stocks vs emerging countries stocks etc.).
+
+A frequency distribution graph of 3 different indices will be provided, so that the reader can understand what returns to expect from the market. My initial idea was to provide a comparison with their correspondant ETFs as well. However, the main problem I encountered was the fact that most ETFs are relatively new. The only ETF that has a track record long enough is $SPY, which was created in 1993. ETFs tracking countries outside of the US are, at most, 15 years old (not enough data in my opinion). 
+
+The only three differences in returns that we can expect between an index and an ETF are:
+- dividends being reinvested if the ETF decides to follow an accumulation strategy
+- a tracking error
+- the Total Expense Ratio of the ETF 
+
+I will analyze three indices and one of their correspondant ETFs:
+- S&P500 index - $SPY etf for the US market
+- Nikkei 225 (Japan)
+- Ftse 100 (United Kingdom)
+
+I chose those indices for the following reasons:
+- Medium to long history
+- Inflation data available (most developing countries, such as China, have a relatively short inflation track record, and they may even fake some of the data :0)
+
+And now, let's get started!")
+
+
 
 data = {
     "Questions": 
