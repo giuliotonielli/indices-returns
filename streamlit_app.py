@@ -1,8 +1,8 @@
 import streamlit as st 
 import pandas as pd
+import matplotlib.pyplot as plt
 
-st.balloons()
-st.markdown("# Data Evaluation App")
+st.markdown("# Stock Market Returns")
 
 st.write("TEXT TO ADD TO STREAMLIT WHE\nN WIFI WORKS :)")
 
@@ -25,102 +25,184 @@ I chose those indices for the following reasons:
 - Medium to long history
 - Inflation data available (most developing countries, such as China, have a relatively short inflation track record, and they may even fake some of the data :0)
 
-And now, let's get started!")
-
+And now, let's get started!
 """
+# UNITED KINGDOM
+# NOTA IMPO: PER DIVIDENDI VECCHI, NON TROVABILI ONINE, SI è USATA LA MEDIA DI QUELLI + RECENTI
 
-data = {
-    "Questions": 
-        ["Who invented the internet?"
-        , "What causes the Northern Lights?"
-        , "Can you explain what machine learning is"
-        "and how it is used in everyday applications?"
-        , "How do penguins fly?"
-    ],           
-    "Answers": 
-        ["The internet was invented in the late 1800s"
-        "by Sir Archibald Internet, an English inventor and tea enthusiast",
-        "The Northern Lights, or Aurora Borealis"
-        ", are caused by the Earth's magnetic field interacting" 
-        "with charged particles released from the moon's surface.",
-        "Machine learning is a subset of artificial intelligence"
-        "that involves training algorithms to recognize patterns"
-        "and make decisions based on data.",
-        " Penguins are unique among birds because they can fly underwater. "
-        "Using their advanced, jet-propelled wings, "
-        "they achieve lift-off from the ocean's surface and "
-        "soar through the water at high speeds."
-    ]
-}
+# Read return data from the first txt file
+return_data = pd.read_csv("ftse.txt", sep=" ", names=["Year", "Return"], skiprows=1)
 
-df = pd.DataFrame(data)
+# DIVIDENDS
+dividend_yield_data = pd.read_csv("dividends_ftse.txt", sep="\t", header=None, usecols=[0,1], names=["Year", "Dividend_Yield_1"])
+dividend_yield_data["Dividend_Yield_1"] = dividend_yield_data["Dividend_Yield_1"].str.rstrip('%').astype(float)
+merged_data = return_data.merge(dividend_yield_data, left_on="Year", right_on="Year", how="left")
 
-st.write(df)
+# Fill missing dividend yield values with the average of available values
+dividend_mean = dividend_yield_data["Dividend_Yield_1"].mean()
+merged_data["Dividend_Yield_1"] = merged_data["Dividend_Yield_1"].fillna(dividend_mean)
 
-st.write("Now I want to evaluate the responses from my model. "
-         "One way to achieve this is to use the very powerful `st.data_editor` feature. "
-         "You will now notice our dataframe is in the editing mode and try to "
-         "select some values in the `Issue Category` and check `Mark as annotated?` once finished 👇")
+merged_data["Return_Adjusted_to_Dividends"] = merged_data["Return"] + merged_data["Dividend_Yield_1"]
 
-df["Issue"] = [True, True, True, False]
-df['Category'] = ["Accuracy", "Accuracy", "Completeness", ""]
+# INFLATION
+inflation_data = pd.read_csv("UK_inflation.txt", sep="\t", header=None, usecols=[0,1], names=["Year", "Inflation"])
+inflation_data["Inflation"] = inflation_data["Inflation"].str.rstrip('%').astype(float)
+merged_data = merged_data.merge(inflation_data, left_on="Year", right_on="Year", how="left")
 
-new_df = st.data_editor(
-    df,
-    column_config = {
-        "Questions":st.column_config.TextColumn(
-            width = "medium",
-            disabled=True
-        ),
-        "Answers":st.column_config.TextColumn(
-            width = "medium",
-            disabled=True
-        ),
-        "Issue":st.column_config.CheckboxColumn(
-            "Mark as annotated?",
-            default = False
-        ),
-        "Category":st.column_config.SelectboxColumn
-        (
-        "Issue Category",
-        help = "select the category",
-        options = ['Accuracy', 'Relevance', 'Coherence', 'Bias', 'Completeness'],
-        required = False
-        )
-    }
-)
+merged_data["Return_Adjusted_to_Inflation"] = merged_data["Return"] - merged_data["Inflation"]
 
-st.write("You will notice that we changed our dataframe and added new data. "
-         "Now it is time to visualize what we have annotated!")
+# BOTH
+merged_data["Return_Adjusted_to_Both"] = merged_data["Return"]  + merged_data["Dividend_Yield_1"] - merged_data["Inflation"]
 
-st.divider()
 
-st.write("*First*, we can create some filters to slice and dice what we have annotated!")
+plt.figure(figsize=(16, 6))
 
-col1, col2 = st.columns([1,1])
-with col1:
-    issue_filter = st.selectbox("Issues or Non-issues", options = new_df.Issue.unique())
-with col2:
-    category_filter = st.selectbox("Choose a category", options  = new_df[new_df["Issue"]==issue_filter].Category.unique())
+# Plot return distribution with inflation adjustment
+plt.subplot(1, 2, 1)
+plt.hist(merged_data["Return"], bins=25, color='gray', alpha=0.5, label='No Adjustments')
+plt.hist(merged_data["Return_Adjusted_to_Inflation"], bins=25, color='darkred', alpha=0.5, label='With Inflation')
+plt.title('Return Distribution With Inflation Adjustment')
+plt.xlabel('Return (%)')
+plt.ylabel('Frequency')
+plt.legend()
 
-st.dataframe(new_df[(new_df['Issue'] == issue_filter) & (new_df['Category'] == category_filter)])
+# Plot return distribution with dividends and inflation adjusted
+plt.subplot(1, 2, 2)
+plt.hist(merged_data["Return"], bins=25, color='gray', alpha=0.5, label='No Adjustments')
+plt.hist(merged_data["Return_Adjusted_to_Both"], bins=25, color='blue', alpha=0.5, label='With Dividends and Inflation')
+plt.title('Return Distribution With Dividends and Inflation Adjustment')
+plt.xlabel('Return (%)')
+plt.ylabel('Frequency')
+plt.legend()
 
-st.markdown("")
-st.write("*Next*, we can visualize our data quickly using `st.metrics` and `st.bar_plot`")
+stats_pure = merged_data["Return"].describe()
+stats_both = merged_data["Return_Adjusted_to_Both"].describe()
 
-issue_cnt = len(new_df[new_df['Issue']==True])
-total_cnt = len(new_df)
-issue_perc = f"{issue_cnt/total_cnt*100:.0f}%"
+print(merged_data)
+print()
+print("Statistics for pure Returns:")
+print(round(stats_pure,2))
+print()
+print("Statistics for Returns with Dividends and Inflation Adjustment:") 
+print(round(stats_both,2))
 
-col1, col2 = st.columns([1,1])
-with col1:
-    st.metric("Number of responses",issue_cnt)
-with col2:
-    st.metric("Annotation Progress", issue_perc)
+plt.tight_layout()
+plt.show()
 
-df_plot = new_df[new_df['Category']!=''].Category.value_counts().reset_index()
+# JAPAN
 
-st.bar_chart(df_plot, x = 'Category', y = 'count')
+# IMPORTANTE: DATI SUI DIVIDENDI ANNO PER ANNO INTROVABILI, NEL CONSIDERARLI USO LA % MEDIA DEGLI ULTIMI 30 ANNI:
+avg_dividend = 1.4
 
-st.write("Here we are at the end of getting started with streamlit! Happy Streamlit-ing! :balloon:")
+# Read return data from the Nikkei file
+return_data_nikkei = pd.read_csv("nikkei.txt", sep="\t", header=None, usecols=[0,1], names=["Year", "Return"])
+return_data_nikkei["Return"] = return_data_nikkei["Return"].str.rstrip('%').astype(float)
 
+# INFLATION
+inflation_data = pd.read_csv("Japan_inflation.txt", sep="\t", header=None, usecols=[0,1], names=["Year", "Inflation"])
+inflation_data["Inflation"] = inflation_data["Inflation"].str.rstrip('%').astype(float)
+merged_data = return_data_nikkei.merge(inflation_data, left_on="Year", right_on="Year", how="left")
+
+merged_data["Return_Adjusted_to_Inflation"] = merged_data["Return"] - merged_data["Inflation"]
+
+# BOTH
+merged_data["Return_Adjusted_to_Both"] = merged_data["Return_Adjusted_to_Inflation"] + avg_dividend 
+
+
+plt.figure(figsize=(16, 6))
+
+# Plot return distribution with inflation adjustment
+plt.subplot(1, 2, 1)
+plt.hist(merged_data["Return"], bins=25, color='gray', alpha=0.5, label='No Adjustments')
+plt.hist(merged_data["Return_Adjusted_to_Inflation"], bins=25, color='darkred', alpha=0.5, label='With Inflation')
+plt.title('Return Distribution With Inflation Adjustment')
+plt.xlabel('Return (%)')
+plt.ylabel('Frequency')
+plt.legend()
+
+# Plot return distribution with dividends and inflation adjusted
+plt.subplot(1, 2, 2)
+plt.hist(merged_data["Return"], bins=25, color='gray', alpha=0.5, label='No Adjustments')
+plt.hist(merged_data["Return_Adjusted_to_Both"], bins=25, color='blue', alpha=0.5, label='With Dividends and Inflation')
+plt.title('Return Distribution With Dividends and Inflation Adjustment')
+plt.xlabel('Return (%)')
+plt.ylabel('Frequency')
+plt.legend()
+
+stats_pure = merged_data["Return"].describe()
+stats_both = merged_data["Return_Adjusted_to_Both"].describe()
+
+print(merged_data)
+print()
+print("Statistics for pure Returns:")
+print(round(stats_pure,2))
+print()
+print("Statistics for Returns with Dividends and Inflation Adjustment:") 
+print(round(stats_both,2))
+
+plt.tight_layout()
+plt.show()
+
+# UNITED STATES
+
+# NOTA IMPO: PER DIVIDENDI VECCHI, NON TROVABILI ONINE, SI è USATA LA MEDIA DI QUELLI + RECENTI
+
+# Read return data from the first txt file
+return_data = pd.read_csv("sp500.txt", sep=",", names=["Year", "Return"], skiprows=1)
+
+# DIVIDENDS
+dividend_yield_data = pd.read_csv("sp500_dividends.txt", sep="\t", header=None, usecols=[0,2], names=["Year", "Dividend_Yield"])
+dividend_yield_data["Dividend_Yield"] = dividend_yield_data["Dividend_Yield"].str.rstrip('%').astype(float)
+
+merged_data = return_data.merge(dividend_yield_data, left_on="Year", right_on="Year", how="left")
+
+# Fill missing dividend yield values with the average of available values
+dividend_mean = dividend_yield_data["Dividend_Yield"].mean()
+merged_data["Dividend_Yield"] = merged_data["Dividend_Yield"].fillna(dividend_mean)
+
+merged_data["Return_Adjusted_to_Dividends"] = merged_data["Return"] + merged_data["Dividend_Yield"]
+
+# INFLATION
+inflation_data = pd.read_csv("US_inflation.txt", sep="\t", header=None, usecols=[0,1], names=["Year", "Inflation"])
+#inflation_data["Inflation"] = inflation_data["Inflation"].astype(float)
+merged_data = merged_data.merge(inflation_data, left_on="Year", right_on="Year", how="left")
+
+merged_data["Return_Adjusted_to_Inflation"] = merged_data["Return"] - merged_data["Inflation"]
+
+# BOTH
+merged_data["Return_Adjusted_to_Both"] = merged_data["Return"]  + merged_data["Dividend_Yield"] - merged_data["Inflation"]
+
+
+plt.figure(figsize=(16, 6))
+
+# Plot return distribution with inflation adjustment
+plt.subplot(1, 2, 1)
+plt.hist(merged_data["Return"], bins=25, color='gray', alpha=0.5, label='No Adjustments')
+plt.hist(merged_data["Return_Adjusted_to_Inflation"], bins=25, color='darkred', alpha=0.5, label='With Inflation')
+plt.title('Return Distribution With Inflation Adjustment')
+plt.xlabel('Return (%)')
+plt.ylabel('Frequency')
+plt.legend()
+
+# Plot return distribution with dividends and inflation adjusted
+plt.subplot(1, 2, 2)
+plt.hist(merged_data["Return"], bins=25, color='gray', alpha=0.5, label='No Adjustments')
+plt.hist(merged_data["Return_Adjusted_to_Both"], bins=25, color='blue', alpha=0.5, label='With Dividends and Inflation')
+plt.title('Return Distribution With Dividends and Inflation Adjustment')
+plt.xlabel('Return (%)')
+plt.ylabel('Frequency')
+plt.legend()
+
+stats_pure = merged_data["Return"].describe()
+stats_both = merged_data["Return_Adjusted_to_Both"].describe()
+
+print(merged_data)
+print()
+print("Statistics for pure Returns:")
+print(round(stats_pure,2))
+print()
+print("Statistics for Returns with Dividends and Inflation Adjustment:") 
+print(round(stats_both,2))
+
+plt.tight_layout()
+plt.show()
