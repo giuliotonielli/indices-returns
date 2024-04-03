@@ -75,6 +75,8 @@ plt.xlabel('Return (%)')
 plt.ylabel('Frequency')
 plt.legend()
 
+st.pyplot(plt)
+
 stats_pure = merged_data["Return"].describe()
 stats_both = merged_data["Return_Adjusted_to_Both"].describe()
 
