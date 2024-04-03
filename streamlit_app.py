@@ -4,8 +4,9 @@ import pandas as pd
 st.balloons()
 st.markdown("# Data Evaluation App")
 
-st.write("TEXT TO ADD TO STREAMLIT WHEN WIFI WORKS :)
+st.write("TEXT TO ADD TO STREAMLIT WHE\nN WIFI WORKS :)")
 
+"""
 The crucial question many investors ask themselves is whether the stock market really returns an average of 7/8% per year. The scope of this short article is to try to provide an answer to that question. Of course, the answer won't be a precise percentage, as stock market returns may depend on the time period and index composition (tech stocks vs value stocks, developed countries stocks vs emerging countries stocks etc.).
 
 A frequency distribution graph of 3 different indices will be provided, so that the reader can understand what returns to expect from the market. My initial idea was to provide a comparison with their correspondant ETFs as well. However, the main problem I encountered was the fact that most ETFs are relatively new. The only ETF that has a track record long enough is $SPY, which was created in 1993. ETFs tracking countries outside of the US are, at most, 15 years old (not enough data in my opinion). 
@@ -26,7 +27,7 @@ I chose those indices for the following reasons:
 
 And now, let's get started!")
 
-
+"""
 
 data = {
     "Questions": 
