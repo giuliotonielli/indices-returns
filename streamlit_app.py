@@ -28,7 +28,7 @@ And now, let's get started!
 # UNITED KINGDOM
 # NOTA IMPO: PER DIVIDENDI VECCHI, NON TROVABILI ONINE, SI è USATA LA MEDIA DI QUELLI + RECENTI
 
-st.write("FTSE 100 (United Kingdom) Stats:")
+st.write("# FTSE 100 (United Kingdom) Stats:")
 st.write()
 st.write("Important: missing dividend yield values have been filled with the average of available values")
 
