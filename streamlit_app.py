@@ -91,7 +91,7 @@ plt.tight_layout()
 st.pyplot(plt.gcf())
 
 # JAPAN
-st.write("Nikkei 225 (Japan) Stats:")
+st.write("# Nikkei 225 (Japan) Stats:")
 st.write()
 st.write("Important: no dividend yield historical data has been found, average dividend yield of the last 30 years has been used (1.4%)")
 
@@ -149,7 +149,7 @@ st.pyplot(plt.gcf())
 
 # UNITED STATES
 
-st.write("S&P 500 (United States) Stats:")
+st.write("# S&P 500 (United States) Stats:")
 st.write()
 st.write("Important: missing dividend yield values have been filled with the average of available values")
 
