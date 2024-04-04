@@ -1,10 +1,8 @@
 import streamlit as st 
 import pandas as pd
-#import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 
 st.markdown("# Stock Market Returns")
-
-st.write("TEXT TO ADD TO STREAMLIT WHE\nN WIFI WORKS :)")
 
 """
 The crucial question many investors ask themselves is whether the stock market really returns an average of 7/8% per year. The scope of this short article is to try to provide an answer to that question. Of course, the answer won't be a precise percentage, as stock market returns may depend on the time period and index composition (tech stocks vs value stocks, developed countries stocks vs emerging countries stocks etc.).
