@@ -1,6 +1,6 @@
 import streamlit as st 
 import pandas as pd
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 
 st.markdown("# Stock Market Returns")
 
@@ -55,6 +55,7 @@ merged_data["Return_Adjusted_to_Inflation"] = merged_data["Return"] - merged_dat
 merged_data["Return_Adjusted_to_Both"] = merged_data["Return"]  + merged_data["Dividend_Yield_1"] - merged_data["Inflation"]
 
 
+
 plt.figure(figsize=(16, 6))
 
 # Plot return distribution with inflation adjustment
@@ -87,7 +88,7 @@ print("Statistics for Returns with Dividends and Inflation Adjustment:")
 print(round(stats_both,2))
 
 plt.tight_layout()
-plt.show()
+st.pyplot(plt.gcf())
 
 # JAPAN
 
