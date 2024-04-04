@@ -28,6 +28,10 @@ And now, let's get started!
 # UNITED KINGDOM
 # NOTA IMPO: PER DIVIDENDI VECCHI, NON TROVABILI ONINE, SI è USATA LA MEDIA DI QUELLI + RECENTI
 
+st.write("FTSE 100 (United Kingdom) Stats:")
+st.write()
+st.write("Important: missing dividend yield values have been filled with the average of available values")
+
 # Read return data from the first txt file
 return_data = pd.read_csv("ftse.txt", sep=" ", names=["Year", "Return"], skiprows=1)
 
@@ -75,18 +79,21 @@ plt.legend()
 stats_pure = merged_data["Return"].describe()
 stats_both = merged_data["Return_Adjusted_to_Both"].describe()
 
-print(merged_data)
-print()
-print("Statistics for pure Returns:")
-print(round(stats_pure,2))
-print()
-print("Statistics for Returns with Dividends and Inflation Adjustment:") 
-print(round(stats_both,2))
+st.write(merged_data)
+st.write()
+st.write("Statistics for pure Returns:")
+st.write(round(stats_pure,2))
+st.write()
+st.write("Statistics for Returns with Dividends and Inflation Adjustment:")
+st.write(round(stats_both,2))
 
 plt.tight_layout()
 st.pyplot(plt.gcf())
 
 # JAPAN
+st.write("Nikkei 225 (Japan) Stats:")
+st.write()
+st.write("Important: no dividend yield historical data has been found, average dividend yield of the last 30 years has been used (1.4%)")
 
 # IMPORTANTE: DATI SUI DIVIDENDI ANNO PER ANNO INTROVABILI, NEL CONSIDERARLI USO LA % MEDIA DEGLI ULTIMI 30 ANNI:
 avg_dividend = 1.4
@@ -129,18 +136,22 @@ plt.legend()
 stats_pure = merged_data["Return"].describe()
 stats_both = merged_data["Return_Adjusted_to_Both"].describe()
 
-print(merged_data)
-print()
-print("Statistics for pure Returns:")
-print(round(stats_pure,2))
-print()
-print("Statistics for Returns with Dividends and Inflation Adjustment:") 
-print(round(stats_both,2))
+st.write(merged_data)
+st.write()
+st.write("Statistics for pure Returns:")
+st.write(round(stats_pure,2))
+st.write()
+st.write("Statistics for Returns with Dividends and Inflation Adjustment:")
+st.write(round(stats_both,2))
 
 plt.tight_layout()
 st.pyplot(plt.gcf())
 
 # UNITED STATES
+
+st.write("S&P 500 (United States) Stats:")
+st.write()
+st.write("Important: missing dividend yield values have been filled with the average of available values")
 
 # NOTA IMPO: PER DIVIDENDI VECCHI, NON TROVABILI ONINE, SI è USATA LA MEDIA DI QUELLI + RECENTI
 
@@ -169,7 +180,6 @@ merged_data["Return_Adjusted_to_Inflation"] = merged_data["Return"] - merged_dat
 # BOTH
 merged_data["Return_Adjusted_to_Both"] = merged_data["Return"]  + merged_data["Dividend_Yield"] - merged_data["Inflation"]
 
-
 plt.figure(figsize=(16, 6))
 
 # Plot return distribution with inflation adjustment
@@ -193,13 +203,13 @@ plt.legend()
 stats_pure = merged_data["Return"].describe()
 stats_both = merged_data["Return_Adjusted_to_Both"].describe()
 
-print(merged_data)
-print()
-print("Statistics for pure Returns:")
-print(round(stats_pure,2))
-print()
-print("Statistics for Returns with Dividends and Inflation Adjustment:") 
-print(round(stats_both,2))
+st.write(merged_data)
+st.write()
+st.write("Statistics for pure Returns:")
+st.write(round(stats_pure,2))
+st.write()
+st.write("Statistics for Returns with Dividends and Inflation Adjustment:")
+st.write(round(stats_both,2))
 
 plt.tight_layout()
 st.pyplot(plt.gcf())
