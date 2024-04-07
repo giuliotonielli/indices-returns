@@ -40,7 +40,7 @@ dividend_yield_data = pd.read_csv("dividends_ftse.txt", sep="\t", header=None, u
 dividend_yield_data["Dividend_Yield_1"] = dividend_yield_data["Dividend_Yield_1"].str.rstrip('%').astype(float)
 merged_data = return_data.merge(dividend_yield_data, left_on="Year", right_on="Year", how="left")
 
-# Fill missing dividend yield values with the average of available values
+# Fill missing dividend yield values with the avg of available values
 dividend_mean = dividend_yield_data["Dividend_Yield_1"].mean()
 merged_data["Dividend_Yield_1"] = merged_data["Dividend_Yield_1"].fillna(dividend_mean)
 
@@ -67,7 +67,7 @@ plt.xlabel('Return (%)')
 plt.ylabel('Frequency')
 plt.legend()
 
-# Plot return distribution with dividends and inflation adjusted
+# Plot return distribution with dividends & inflation adjusted
 plt.subplot(1, 2, 2)
 plt.hist(merged_data["Return"], bins=25, color='gray', alpha=0.5, label='No Adjustments')
 plt.hist(merged_data["Return_Adjusted_to_Both"], bins=25, color='blue', alpha=0.5, label='With Dividends and Inflation')
