@@ -14,8 +14,8 @@ The only three differences in returns that we can expect between an index and an
 - a tracking error
 - the Total Expense Ratio of the ETF 
 
-I will analyze three indices and one of their correspondant ETFs:
-- S&P500 index - $SPY etf for the US market
+I will analyze three indices:
+- S&P500 index for the US market
 - Nikkei 225 (Japan)
 - Ftse 100 (United Kingdom)
 
